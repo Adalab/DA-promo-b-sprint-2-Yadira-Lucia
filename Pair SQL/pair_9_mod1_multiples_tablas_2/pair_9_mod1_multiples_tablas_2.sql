@@ -1,4 +1,4 @@
-USE northwing;
+USE northwind;
 #EJERCICIO 1: Qué empresas tenemos en la BBDD Northwind:
 #Lo primero que queremos hacer es obtener una consulta SQL que nos devuelva el nombre de todas las empresas cliente, 
 #los ID de sus pedidos y las fechas.
@@ -32,18 +32,31 @@ ON customers.customer_id = orders.customer_id AND customers.country= "UK";
 #las empleadas y sus supervisoras. Concretamente nos piden: la ubicación, nombre, y apellido tanto de las empleadas como de 
 #las jefas. Investiga el resultado, ¿sabes decir quién es el director?
 
-SELECT a.employees.city, a.employees.first_name AS NombreEmpleado, a.employees.last_name AS ApellidoEmpleado, b.employees.city, b.employees.first_name AS NombreJefe, b.employees.last_name AS ApellidoJefe
-FROM a.employees, b.employees
+#Solución con todas las empleadas
+SELECT a.city, a.first_name AS NombreEmpleado, a.last_name AS ApellidoEmpleado, a.title AS puesto, b.city, b.first_name AS NombreJefe, b.last_name AS ApellidoJefe, b.title AS puesto
+FROM employees a, employees b
 WHERE a.employee_id <> b.employee_id;
 
-
-SELECT a.city, a.first_name AS NombreEmpleado, a.last_name AS ApellidoEmpleado, a. b.city, b.first_name AS NombreJefe, b.last_name AS ApellidoJefe
+#Solución agrupada
+SELECT a.city, a.first_name AS NombreEmpleado, a.last_name AS ApellidoEmpleado, b.city, b.first_name AS NombreJefe, b.last_name AS ApellidoJefe
 FROM employees a, employees b
-WHERE a.employee_id <> b.employee_id AND 
+WHERE a.reports_to = b.employee_id;
 
+-- El jefe es el que no está en la lista 
 
+#BONUS: FULL OUTER JOIN Pedidos y empresas con pedidos asociados o no:
+#Selecciona todos los pedidos, tengan empresa asociada o no, y todas las 
+#empresas tengan pedidos asociados o no. Muestra el ID del pedido, el nombre de la empresa y la fecha del pedido (si existe).
 
-
+SELECT orders.order_id, orders.customer_id, orders.order_date, customers.customer_id, customers.company_name
+FROM orders
+LEFT JOIN customers
+ON orders.customer_id = customers.customer_id
+UNION
+SELECT orders.order_id, orders.customer_id, orders.order_date, customers.customer_id, customers.company_name
+FROM orders
+RIGHT JOIN customers
+ON orders.customer_id = customers.customer_id;
 
 
 
